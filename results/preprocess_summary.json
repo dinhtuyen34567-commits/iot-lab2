@@ -1,0 +1,22 @@
+{
+  "rows_raw": 23,
+  "duplicates_removed": 0,
+  "outliers_iqr": {
+    "temperature": 0,
+    "humidity": 0,
+    "light": 0,
+    "distance_cm": 0
+  },
+  "outliers_zscore": {
+    "temperature": 0,
+    "humidity": 0,
+    "light": 0,
+    "distance_cm": 0
+  },
+  "method_used": "iqr",
+  "bins": 3,
+  "bins_missing_before_fill": 0,
+  "bins_still_missing_dropped": 0,
+  "rows_clean": 3,
+  "written_to_bucket": "clean"
+}

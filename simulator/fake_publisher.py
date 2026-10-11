@@ -1,4 +1,7 @@
+"""Giả lập thiết bị thứ hai (esp32-sim) gửi dữ liệu có nhiễu, rơi gói, outlier, gửi trùng.
 
+Chạy:  python simulator/fake_publisher.py --interval 1 --count 600
+"""
 import os
 import json
 import time
@@ -35,7 +38,7 @@ client.loop_start()
 
 boot_id = random.getrandbits(32)
 sent = dropped = outliers = dups = 0
-gap_until = -1 
+gap_until = -1  # một khoảng trống dài để demo xử lý giá trị thiếu
 gap_start = random.randint(args.count // 3, args.count // 2)
 
 print(f"Gui {args.count} goi vao {TOPIC} (moi {args.interval}s)")
@@ -45,6 +48,7 @@ for i in range(1, args.count + 1):
     light = 2000 + 1500 * math.sin(2 * math.pi * i / 300) + random.gauss(0, 50)
     distance = 100 + random.gauss(0, 2)
 
+    # outlier (vẫn nằm trong khoảng hợp lệ của collector)
     if random.random() < args.outlier:
         kind = random.choice(["temp", "hum", "light"])
         if kind == "temp":
@@ -68,6 +72,7 @@ for i in range(1, args.count + 1):
         "uptime_s": int(i * args.interval),
     }
 
+    # rơi gói: sequence vẫn tăng nhưng không gửi
     if i == gap_start:
         gap_until = i + 12
     in_gap = gap_start <= i <= gap_until
@@ -79,7 +84,7 @@ for i in range(1, args.count + 1):
     msg = json.dumps(payload)
     client.publish(TOPIC, msg, qos=1)
     sent += 1
-    if random.random() < args.dup: 
+    if random.random() < args.dup:  # gửi trùng
         client.publish(TOPIC, msg, qos=1)
         dups += 1
 
